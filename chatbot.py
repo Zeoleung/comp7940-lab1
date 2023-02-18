@@ -20,6 +20,7 @@ def main():
     # on different commands - answer in Telegram
     dispatcher.add_handler(CommandHandler("add", add))
     dispatcher.add_handler(CommandHandler("help", help_command))
+    dispatcher.add_handler(CommandHandler("hello", hello_command))
     # To start the bot:
     updater.start_polling()
     updater.idle()
@@ -30,9 +31,23 @@ def echo(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text= reply_message)
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
+
+def hello_command(update: Update, context: CallbackContext) -> None:
+    """Send a message when the command /hello is issued."""
+    try:
+        global redis1
+        logging.info(context.args[0])
+        msg = context.args[0]   # /add keyword <-- this should store the keyword
+        update.message.reply_text('Good day,' + msg + '!')
+    except (IndexError, ValueError):
+        update.message.reply_text('Usage: /hello <keyword>')
+
+
 def help_command(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /help is issued."""
     update.message.reply_text('Helping you helping you.')
+
+
 def add(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /add is issued."""
     try:
